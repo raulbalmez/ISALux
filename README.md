@@ -9,7 +9,7 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.14-EE4C2C.svg?style=flat-square&logo=pytorch&logoColor=white)](https://pytorch.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg?style=flat-square)](LICENSE)
 
-[**Paper**](https://arxiv.org/abs/2508.17885) · [**Results**](#-results) · [**Citation**](#-citation)
+[**Paper**](https://arxiv.org/abs/2508.17885) · [**Checkpoints**](#-checkpoints) · [**Results**](#-results) · [**Citation**](#-citation)
 
 </div>
 
@@ -23,7 +23,7 @@
 - **LoRA on Q, K, V** — low-rank adaptations inside the attention block to reduce overfitting to dataset-specific light patterns.
 - **MoE-FFN** — a sparse mixture of 4 CNN experts with a gating network that activates the top 2 per image.
 - **Efficient** — **1.85M parameters** (plus a frozen 11.03M MobileNetV3 segmenter) and **105 ms** per 400×600 image.
-- **State of the art on average** — **30.08 dB / 0.910** averaged over LOL-v1, LOL-v2 and SDSD.
+- **State of the art (2024 – early 2025)** — the highest PSNR among the compared methods on LOL-v2-real, LOL-v2-synthetic, SDSD-in, SDSD-out and LOL-Blur, with a **30.08 dB / 0.910** average over LOL and SDSD.
 
 ## 📊 Results
 
@@ -100,6 +100,18 @@ python scripts/download_data.py --out data
 
 The datasets are placed under the `data/` folder.
 
+## 📦 Checkpoints
+
+Pretrained ISA-T weights are available on **[Google Drive](https://drive.google.com/drive/folders/REPLACE_WITH_FOLDER_ID)**.
+
+| Dataset | File |
+| :--- | :--- |
+| LOL-v1 | `lolv1_best.pth` |
+| LOL-v2-real | `lolv2_real_best.pth` |
+| LOL-v2-synthetic | `lolv2_syn_best.pth` |
+
+Place them under `checkpoints/` and pass the file to `evaluate.py` with `--weights` (see [Inference](#-inference)). The frozen MobileNetV3 and VGG-19 weights are downloaded automatically by torchvision.
+
 ## 🏋️ Training
 
 ```bash
@@ -129,6 +141,12 @@ python train.py ... --w_perc 0          # L2 + MS-SSIM only
 ```
 
 Model width and expert settings are arguments of `ISAT` in [`isalux/model.py`](isalux/model.py).
+
+## 🗒️ Things to Follow
+
+- [ ] Support for the SDSD-indoor and SDSD-outdoor datasets
+- [ ] Support for the LOL-Blur dataset
+- [ ] Checkpoints for SDSD-in, SDSD-out and LOL-Blur
 
 ## 📄 Citation
 
