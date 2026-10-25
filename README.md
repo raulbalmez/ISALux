@@ -24,6 +24,7 @@
 - **MoE-FFN** — a sparse mixture of 4 CNN experts with a gating network that activates the top 2 per image.
 - **Efficient** — **1.85M parameters** (plus a frozen 11.03M MobileNetV3 segmenter) and **105 ms** per 400×600 image.
 - **State of the art (2024 – early 2025)** — the highest PSNR among the compared methods on LOL-v2-real, LOL-v2-synthetic, SDSD-in, SDSD-out and LOL-Blur, with a **30.08 dB / 0.910** average over LOL and SDSD.
+- **Ranking** — based on self-reported numbers from recent papers, ISALux has the highest PSNR on LOL-v2-real and LOL-v2-synthetic under ground-truth-mean alignment, and on SDSD-in, SDSD-out and LOL-Blur among frame-based methods. Many 2025 – 2026 papers report only unaligned scores, which are not directly comparable.
 
 ## 📊 Results
 
