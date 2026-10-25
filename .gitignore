@@ -5,3 +5,4 @@ checkpoints/
 *.pth
 data/
 logs/
+/videos/

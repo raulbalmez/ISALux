@@ -154,7 +154,7 @@ Model width and expert settings are arguments of `ISAT` in [`isalux/model.py`](i
 - [ ] Support for the SDSD-indoor and SDSD-outdoor datasets
 - [ ] Support for the LOL-Blur dataset
 - [ ] Checkpoints for SDSD-in, SDSD-out and LOL-Blur
-- [ ] Video demonstration of ISALux
+- [x] Video demonstration of ISALux (on the [project page](https://raulbalmez.github.io/ISALux/))
 
 ## 📄 Citation
 

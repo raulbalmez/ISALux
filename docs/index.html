@@ -90,9 +90,21 @@ pre{background:var(--code);border:1px solid var(--line);border-radius:12px;paddi
 .copy{margin:12px 0 0;font:600 13px/1 system-ui,sans-serif;padding:9px 14px;border-radius:8px;border:1px solid var(--line);
   background:var(--surface);color:var(--ink);cursor:pointer}
 .copy:hover{border-color:var(--accent);color:var(--accent)}
+.seg{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;font:600 13px/1 system-ui,sans-serif}
+.seg button{padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.seg button:hover{border-color:var(--accent)}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.vids{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.vids figure{margin:0}
+.vids video{display:block;width:100%;aspect-ratio:16/9;object-fit:fill;background:#000;border-radius:10px;border:1px solid var(--line)}
+.vids figcaption{font:600 13px/1.3 system-ui,sans-serif;color:var(--muted);margin:8px 2px 0}
+.vctl{display:flex;gap:12px;align-items:center;margin:14px 0 4px;font:600 13px/1 system-ui,sans-serif}
+.vctl button{padding:9px 16px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-width:84px}
+.vctl button:hover{border-color:var(--accent);color:var(--accent)}
+.vctl input{flex:1;accent-color:var(--accent)}
 footer{margin-top:56px;border-top:1px solid var(--line);padding:26px 0 48px;font:14px/1.6 system-ui,sans-serif;color:var(--muted);text-align:center}
 @media(max-width:760px){
-  .stats{grid-template-columns:repeat(2,1fr)} .cards,.two{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)} .cards,.two,.vids{grid-template-columns:1fr}
   header.hero{padding-top:40px} body{font-size:16px}
 }
 </style>
@@ -200,6 +212,29 @@ footer{margin-top:56px;border-top:1px solid var(--line);padding:26px 0 48px;font
   <h3>Qualitative comparison</h3>
   <div class="fig"><img src="assets/qualitative.png" alt="Qualitative comparison on the LOL dataset"></div>
   <p class="cap">Qualitative results on the LOL dataset. ISALux preserves colours and avoids the artifacts of competing methods.</p>
+
+  <h3>Video demonstrations</h3>
+  <p class="lead">Real low-light clips enhanced frame by frame by ISALux. Choose a clip and the benchmark checkpoint used for the enhancement; the input and the result play in sync.</p>
+  <div id="demo">
+    <div class="seg" id="clipSeg" role="group" aria-label="Clip">
+      <button type="button" data-clip="1" aria-pressed="true">Clip 1</button>
+      <button type="button" data-clip="2" aria-pressed="false">Clip 2</button>
+      <button type="button" data-clip="3" aria-pressed="false">Clip 3</button>
+    </div>
+    <div class="vids">
+      <figure><video id="vIn" muted loop playsinline preload="metadata"></video><figcaption>Input (low light)</figcaption></figure>
+      <figure><video id="vOut" muted loop playsinline preload="metadata"></video><figcaption id="outCap">ISALux (LOL-v1 checkpoint)</figcaption></figure>
+    </div>
+    <div class="vctl"><button type="button" id="playBtn">Pause</button><input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Seek"></div>
+    <div class="seg" id="ckptSeg" role="group" aria-label="Checkpoint">
+      <button type="button" data-ckpt="lol_v1" aria-pressed="true">LOL-v1</button>
+      <button type="button" data-ckpt="lol_v2" aria-pressed="false">LOL-v2-real</button>
+      <button type="button" data-ckpt="lol_v2_syn" aria-pressed="false">LOL-v2-synthetic</button>
+      <button type="button" data-ckpt="sdsd_in" aria-pressed="false">SDSD-in</button>
+      <button type="button" data-ckpt="sdsd_out" aria-pressed="false">SDSD-out</button>
+    </div>
+  </div>
+  <p class="cap">Enhanced clips were produced at 608&times;400 and are shown at the original 16:9 aspect ratio.</p>
 </section>
 
 <section id="citation">
@@ -229,6 +264,39 @@ document.getElementById('copy').addEventListener('click', function(){
   var done=function(){ btn.textContent='Copied'; setTimeout(function(){btn.textContent='Copy BibTeX'},1600); };
   if(navigator.clipboard){ navigator.clipboard.writeText(text).then(done,function(){}); }
 });
+
+(function(){
+  var vIn=document.getElementById('vIn'), vOut=document.getElementById('vOut');
+  var playBtn=document.getElementById('playBtn'), scrub=document.getElementById('scrub'), cap=document.getElementById('outCap');
+  var names={lol_v1:'LOL-v1',lol_v2:'LOL-v2-real',lol_v2_syn:'LOL-v2-synthetic',sdsd_in:'SDSD-in',sdsd_out:'SDSD-out'};
+  var clip='1', ckpt='lol_v1', playing=false;
+  var reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function play(){ playing=true; playBtn.textContent='Pause'; vIn.play().catch(function(){}); vOut.play().catch(function(){}); }
+  function pause(){ playing=false; playBtn.textContent='Play'; vIn.pause(); vOut.pause(); }
+  function load(keepTime){
+    var t=keepTime?vIn.currentTime:0, was=playing;
+    vIn.src='videos/clip'+clip+'_input.mp4'; vOut.src='videos/clip'+clip+'_'+ckpt+'.mp4';
+    cap.textContent='ISALux ('+names[ckpt]+' checkpoint)';
+    var seek=function(v){ v.addEventListener('loadedmetadata',function f(){ v.removeEventListener('loadedmetadata',f); try{v.currentTime=t;}catch(e){} if(was) v.play().catch(function(){}); }); };
+    seek(vIn); seek(vOut);
+  }
+  function setPressed(group,attr,val){ Array.prototype.forEach.call(group.children,function(b){ b.setAttribute('aria-pressed', b.getAttribute(attr)===val?'true':'false'); }); }
+  document.getElementById('clipSeg').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return; clip=b.getAttribute('data-clip'); setPressed(this,'data-clip',clip); load(false); });
+  document.getElementById('ckptSeg').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return; ckpt=b.getAttribute('data-ckpt'); setPressed(this,'data-ckpt',ckpt); load(true); });
+  playBtn.addEventListener('click',function(){ playing?pause():play(); });
+  scrub.addEventListener('input',function(){ var t=(scrub.value/1000)*(vIn.duration||0); vIn.currentTime=t; vOut.currentTime=t; });
+  setInterval(function(){
+    if(vIn.duration){ scrub.value=Math.round(1000*vIn.currentTime/vIn.duration); }
+    if(playing && Math.abs(vOut.currentTime-vIn.currentTime)>0.2){ vOut.currentTime=vIn.currentTime; }
+  },200);
+  load(false);
+  if(reduce){ pause(); } else if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ if(!playing && !reduce && !vIn.dataset.userPaused) play(); } else if(playing){ pause(); } }); },{threshold:0.35}).observe(document.getElementById('demo'));
+    playBtn.addEventListener('click',function(){ vIn.dataset.userPaused = playing?'':'1'; });
+  } else { play(); }
+})();
 </script>
 </body>
 </html>
