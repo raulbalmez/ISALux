@@ -2,7 +2,7 @@
 
 # ISALux
 
-### Illumination and Semantics-Aware Transformer Employing Mixture of Experts for Low Light Image Enhancement
+### Illumination and Semantics-Aware Transformer Employing Mixture of Experts for Low Light Image Enhancement (WACV 2026)
 
 Raul Balmez, Alexandru Brateanu, Ciprian Orhei, Codruta Ancuti, Cosmin Ancuti
 
