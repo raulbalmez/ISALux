@@ -4,12 +4,16 @@
 
 ### Illumination and Semantics-Aware Transformer Employing Mixture of Experts for Low Light Image Enhancement
 
+Raul Balmez, Alexandru Brateanu, Ciprian Orhei, Codruta Ancuti, Cosmin Ancuti
+
+[![WACV 2026](https://img.shields.io/badge/WACV-2026-1f6feb.svg?style=flat-square)](https://openaccess.thecvf.com/content/WACV2026/html/Balmez_ISALux_Illumination_and_Semantics-Aware_Transformer_Employing_Mixture_of_Experts_for_WACV_2026_paper.html)
 [![arXiv](https://img.shields.io/badge/arXiv-2508.17885-b31b1b.svg?style=flat-square&logo=arxiv)](https://arxiv.org/abs/2508.17885)
+[![Project Page](https://img.shields.io/badge/Project-Page-0a7d5a.svg?style=flat-square)](https://raulbalmez.github.io/ISALux/)
 [![Python](https://img.shields.io/badge/Python-3.13-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.14-EE4C2C.svg?style=flat-square&logo=pytorch&logoColor=white)](https://pytorch.org/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/badge/License-PolyForm%20NC%201.0.0-orange.svg?style=flat-square)](LICENSE)
 
-[**Paper**](https://arxiv.org/abs/2508.17885) · [**Checkpoints**](#-checkpoints) · [**Results**](#-results) · [**Citation**](#-citation)
+[**Paper (WACV 2026)**](https://openaccess.thecvf.com/content/WACV2026/html/Balmez_ISALux_Illumination_and_Semantics-Aware_Transformer_Employing_Mixture_of_Experts_for_WACV_2026_paper.html) · [**Project Page**](https://raulbalmez.github.io/ISALux/) · [**Supplementary**](https://openaccess.thecvf.com/content/WACV2026/supplemental/Balmez_ISALux_Illumination_and_WACV_2026_supplemental.pdf) · [**Checkpoints**](#-checkpoints) · [**Results**](#-results) · [**Citation**](#-citation)
 
 </div>
 
@@ -38,14 +42,16 @@
 | LLFormer | 24.6 | 25.75 / 0.823 | 26.19 / 0.819 | 28.00 / 0.927 | – | – | 26.64 / 0.856 |
 | LL-SKF | 39.91 | 26.79 / 0.879 | 28.45 / 0.905 | 29.11 / 0.953 | – | – | 28.12 / **0.912** |
 | Retinexformer | **1.61** | 27.18 / 0.850 | 27.71 / 0.856 | 29.04 / 0.939 | 29.77 / 0.896 | 29.84 / 0.877 | 28.71 / 0.884 |
-| GLARE | 44.04 | 27.35 / **0.883** | 28.98 / **0.905** | 29.84 / **0.958** | 30.10 / 0.896 | 30.85 / 0.884 | 29.42 / 0.905 |
-| **ISALux (ours)** | 1.85 | **27.63** / 0.881 | **29.76** / 0.908 | **30.78** / 0.956 | **30.67 / 0.909** | **31.58 / 0.895** | **30.08** / 0.910 |
+| GLARE | 44.04 | 27.35 / **0.883** | 28.98 / 0.905 | 29.84 / **0.958** | 30.10 / 0.896 | 30.85 / 0.884 | 29.42 / 0.905 |
+| **ISALux (ours)** | 1.85 | **27.63** / 0.881 | **29.76 / 0.908** | **30.78** / 0.956 | **30.67 / 0.909** | **31.58 / 0.895** | **30.08** / 0.910 |
 
 <details>
 <summary><b>LOL-Blur and no-reference results</b></summary>
 
 | Method | LOL-Blur PSNR / SSIM ↑ |
 | :--- | :---: |
+| FourierDiff | 20.53 / 0.710 |
+| DeblurGAN-v2 | 22.30 / 0.745 |
 | Retinexformer | 22.90 / 0.824 |
 | LEDNet | 25.74 / 0.850 |
 | ASP-LED | 26.73 / 0.866 |
@@ -63,7 +69,7 @@
 
 </details>
 
-Numbers are taken from Tables 1 and 2 of the paper.
+Numbers are taken from Tables 1 – 3 of the [WACV paper](https://openaccess.thecvf.com/content/WACV2026/html/Balmez_ISALux_Illumination_and_Semantics-Aware_Transformer_Employing_Mixture_of_Experts_for_WACV_2026_paper.html).
 
 ## ⚙️ Installation
 
@@ -155,13 +161,19 @@ Model width and expert settings are arguments of `ISAT` in [`isalux/model.py`](i
 If you find ISALux useful in your research, please consider citing:
 
 ```bibtex
-@article{balmez2025isalux,
-  title   = {ISALux: Illumination and Semantics-Aware Transformer Employing Mixture of Experts for Low Light Image Enhancement},
-  author  = {Balmez, Raul and Brateanu, Alexandru and Orhei, Ciprian and Ancuti, Codruta and Ancuti, Cosmin},
-  journal = {arXiv preprint arXiv:2508.17885},
-  year    = {2025}
+@inproceedings{balmez2026isalux,
+  title     = {ISALux: Illumination and Semantics-Aware Transformer Employing Mixture of Experts for Low Light Image Enhancement},
+  author    = {Balmez, Raul and Brateanu, Alexandru and Orhei, Ciprian and Ancuti, Codruta O. and Ancuti, Cosmin},
+  booktitle = {Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)},
+  year      = {2026},
+  eprint    = {2508.17885},
+  archivePrefix = {arXiv}
 }
 ```
+
+## 📜 License
+
+ISALux is source-available for non-commercial research and educational use under the [PolyForm Noncommercial License 1.0.0](LICENSE). It is not open-source software in the OSI sense, and commercial use requires a separate written license. This applies to the source code, model definitions, documentation and pretrained weights. Third-party components remain under their original licenses. See [LICENSE](LICENSE) for the full terms.
 
 ## Acknowledgements
 

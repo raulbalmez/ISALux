@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISALux | WACV 2026</title>
+<meta name="description" content="ISALux: an illumination and semantics-aware transformer employing a mixture of experts for low light image enhancement. WACV 2026.">
+<meta name="author" content="Raul Balmez, Alexandru Brateanu, Ciprian Orhei, Codruta Ancuti, Cosmin Ancuti">
+<meta property="og:title" content="ISALux: Illumination and Semantics-Aware Transformer Employing Mixture of Experts for Low Light Image Enhancement">
+<meta property="og:description" content="HISA-MSA, LoRA and a sparse mixture-of-experts FFN for low-light enhancement. 1.85M parameters, 105 ms per 400x600 image. WACV 2026.">
+<meta property="og:image" content="assets/qualitative.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{
+  --bg:#fbfaf8; --surface:#ffffff; --ink:#1a1a1f; --muted:#5d6068; --line:#e4e2dc;
+  --accent:#b4531a; --accent-ink:#ffffff; --tag:#fdeede; --hl:#fdf1e4; --code:#f3f1ec;
+  --fig:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131316; --surface:#1b1b20; --ink:#ececf0; --muted:#a2a4ad; --line:#2e2e35;
+    --accent:#e8884a; --accent-ink:#17171a; --tag:#2b2119; --hl:#2a2018; --code:#202026;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131316; --surface:#1b1b20; --ink:#ececf0; --muted:#a2a4ad; --line:#2e2e35;
+  --accent:#e8884a; --accent-ink:#17171a; --tag:#2b2119; --hl:#2a2018; --code:#202026;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:17px/1.65 "Charter","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+a{color:var(--accent)}
+nav{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+  font:600 13px/1 system-ui,-apple-system,"Segoe UI",sans-serif}
+nav .wrap{display:flex;gap:22px;align-items:center;height:48px;overflow-x:auto;white-space:nowrap}
+nav a{color:var(--muted);text-decoration:none}
+nav a:hover{color:var(--ink)}
+nav .brand{color:var(--ink);margin-right:auto;letter-spacing:.04em}
+header.hero{padding:64px 0 36px;text-align:center}
+.tag{display:inline-block;padding:5px 14px;border-radius:999px;background:var(--tag);color:var(--accent);
+  font:700 12px/1 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase}
+h1{font:700 clamp(30px,5vw,46px)/1.12 "Charter",Georgia,serif;margin:18px auto 6px;max-width:860px;letter-spacing:-.01em}
+h1 small{display:block;font:500 clamp(17px,2.4vw,22px)/1.35 "Charter",Georgia,serif;color:var(--muted);margin-top:12px;letter-spacing:0}
+.authors{margin:26px 0 4px;font-size:18px}
+.authors span{white-space:nowrap;margin:0 9px}
+.authors sup{color:var(--accent);font:600 12px system-ui}
+.affil{color:var(--muted);font-size:15px;margin:0}
+.affil span{margin:0 10px;white-space:nowrap}
+.affil sup{color:var(--accent)}
+.buttons{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:30px 0 0;font:600 14px/1 system-ui,sans-serif}
+.btn{display:inline-flex;align-items:center;padding:12px 18px;border-radius:9px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink);text-decoration:none}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.07);color:var(--accent-ink)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:40px 0 0}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 12px}
+.stat b{display:block;font:700 28px/1.1 system-ui,sans-serif;color:var(--accent)}
+.stat span{font:500 13px/1.4 system-ui,sans-serif;color:var(--muted)}
+section{padding:44px 0 6px}
+.eyebrow{font:700 12px/1 system-ui,sans-serif;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+h2{font:700 30px/1.2 "Charter",Georgia,serif;margin:8px 0 18px}
+h3{font:700 19px/1.3 system-ui,sans-serif;margin:30px 0 8px}
+p{margin:0 0 16px}
+.lead{max-width:760px}
+.fig{background:var(--fig);border:1px solid var(--line);border-radius:12px;padding:12px;margin:22px 0 8px}
+.fig img{display:block;width:100%;height:auto}
+.cap{font:14px/1.5 system-ui,sans-serif;color:var(--muted);margin:8px 2px 24px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px}
+.card h4{margin:0 0 8px;font:700 16px/1.3 system-ui,sans-serif}
+.card p{font:15px/1.6 system-ui,sans-serif;color:var(--muted);margin:0}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin:14px 0 6px}
+table{border-collapse:collapse;width:100%;font:13px/1.4 system-ui,sans-serif;min-width:700px}
+th,td{padding:8px 6px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+thead th{font-weight:700;color:var(--muted);background:var(--code)}
+tbody tr:last-child td{border-bottom:0}
+tr.ours td{background:var(--hl);font-weight:700}
+td.best{font-weight:700;color:var(--accent)}
+table.narrow{min-width:0}
+table.narrow th,table.narrow td{padding:9px 12px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:18px;overflow-x:auto;
+  font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin:0}
+.copy{margin:12px 0 0;font:600 13px/1 system-ui,sans-serif;padding:9px 14px;border-radius:8px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink);cursor:pointer}
+.copy:hover{border-color:var(--accent);color:var(--accent)}
+footer{margin-top:56px;border-top:1px solid var(--line);padding:26px 0 48px;font:14px/1.6 system-ui,sans-serif;color:var(--muted);text-align:center}
+@media(max-width:760px){
+  .stats{grid-template-columns:repeat(2,1fr)} .cards,.two{grid-template-columns:1fr}
+  header.hero{padding-top:40px} body{font-size:16px}
+}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <span class="brand">ISALUX</span>
+  <a href="#abstract">Abstract</a><a href="#method">Method</a><a href="#results">Results</a><a href="#citation">Citation</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <span class="tag">WACV 2026</span>
+  <h1>ISALux<small>Illumination and Semantics-Aware Transformer Employing Mixture of Experts for Low Light Image Enhancement</small></h1>
+  <p class="authors">
+    <span>Raul Balmez<sup>1</sup></span><span>Alexandru Brateanu<sup>1</sup></span><span>Ciprian Orhei<sup>2,3</sup></span><span>Codruta O. Ancuti<sup>2,3</sup></span><span>Cosmin Ancuti<sup>2,3</sup></span>
+  </p>
+  <p class="affil"><span><sup>1</sup>The University of Manchester</span><span><sup>2</sup>Polytechnic University Timisoara</span><span><sup>3</sup>West University Timisoara</span></p>
+  <div class="buttons">
+    <a class="btn primary" href="https://openaccess.thecvf.com/content/WACV2026/html/Balmez_ISALux_Illumination_and_Semantics-Aware_Transformer_Employing_Mixture_of_Experts_for_WACV_2026_paper.html">Paper (WACV 2026)</a>
+    <a class="btn" href="https://arxiv.org/abs/2508.17885">arXiv</a>
+    <a class="btn" href="https://openaccess.thecvf.com/content/WACV2026/supplemental/Balmez_ISALux_Illumination_and_WACV_2026_supplemental.pdf">Supplementary</a>
+    <a class="btn" href="https://github.com/raulbalmez/ISALux">Code</a>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>1.85M</b><span>parameters in ISA-T</span></div>
+    <div class="stat"><b>105 ms</b><span>per 400&times;600 image</span></div>
+    <div class="stat"><b>30.08 dB</b><span>average PSNR, LOL + SDSD</span></div>
+    <div class="stat"><b>top 2</b><span>of 4 experts per image</span></div>
+  </div>
+</div></header>
+
+<main class="wrap">
+<section id="abstract">
+  <div class="eyebrow">01 &middot; Abstract</div>
+  <h2>Abstract</h2>
+  <p class="lead">We introduce ISALux, a novel transformer-based approach for Low-Light Image Enhancement (LLIE) that seamlessly integrates illumination and semantic priors. Our architecture includes an original self-attention block, Hybrid Illumination and Semantics-Aware Multi-Headed Self-Attention (HISA-MSA), which integrates illumination and semantic segmentation maps for enhanced feature extraction. ISALux employs two self-attention modules to independently process illumination and semantic features, selectively enriching each other to regulate luminance and highlight structural variations in real-world scenarios. A Mixture of Experts (MoE)-based Feed-Forward Network (FFN) enhances contextual learning, with a gating mechanism conditionally activating the top K experts for specialized processing. To address overfitting in LLIE methods caused by distinct light patterns in benchmarking datasets, we enhance the HISA-MSA module with low-rank matrix adaptations (LoRA). Extensive qualitative and quantitative evaluations across multiple specialized datasets demonstrate that ISALux is competitive with state-of-the-art (SOTA) methods. Additionally, an ablation study highlights the contribution of each component in the proposed model.</p>
+</section>
+
+<section id="method">
+  <div class="eyebrow">02 &middot; Method</div>
+  <h2>Architecture</h2>
+  <p class="lead">ISALux is a two-level U-shaped transformer. An illumination prior and a semantic prior are computed from the low-light input, adapted to each level with lightweight convolutions, and injected into every attention block.</p>
+  <div class="fig"><img src="assets/architecture.png" alt="Overview of the ISALux architecture"></div>
+  <p class="cap">Overview of ISALux. The illumination prior is <i>1 &minus; max<sub>c</sub>(I)</i>; the semantic prior is the 21-class probability map of a frozen MobileNetV3 segmenter.</p>
+  <div class="cards">
+    <div class="card"><h4>Illumination and semantic priors</h4><p>Both priors are adapted to the channel depth of each transformer block, with a 1&times;1 convolution for illumination and a strided 3&times;3 convolution for semantics.</p></div>
+    <div class="card"><h4>HISA-MSA</h4><p>Two parallel attention modules, each with LoRA on Q, K and V. Their outputs are modulated by the illumination and semantic maps and fused with learnable weights.</p></div>
+    <div class="card"><h4>MoE-FFN</h4><p>A gating network over average-pooled features activates the top 2 of 4 convolutional experts, so each image is processed by specialised paths.</p></div>
+  </div>
+  <div class="fig"><img src="assets/blocks.png" alt="HISA-MSA and MoE-FFN blocks"></div>
+  <p class="cap">The HISA-MSA and MoE-FFN blocks that make up each transformer block.</p>
+</section>
+
+<section id="results">
+  <div class="eyebrow">03 &middot; Results</div>
+  <h2>Quantitative and qualitative evaluation</h2>
+
+  <h3>LOL and SDSD</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Method</th><th>Params (M)</th><th colspan="2">LOL-v1</th><th colspan="2">LOL-v2-R</th><th colspan="2">LOL-v2-S</th><th colspan="2">SDSD-in</th><th colspan="2">SDSD-out</th><th colspan="2">Average</th></tr>
+    <tr><th></th><th></th><th>PSNR</th><th>SSIM</th><th>PSNR</th><th>SSIM</th><th>PSNR</th><th>SSIM</th><th>PSNR</th><th>SSIM</th><th>PSNR</th><th>SSIM</th><th>PSNR</th><th>SSIM</th></tr></thead>
+    <tbody>
+      <tr><td>Restormer (CVPR '22)</td><td>26.1</td><td>22.43</td><td>0.823</td><td>19.94</td><td>0.827</td><td>21.41</td><td>0.830</td><td>25.67</td><td>0.827</td><td>24.79</td><td>0.802</td><td>22.85</td><td>0.822</td></tr>
+      <tr><td>SNR-Net (CVPR '22)</td><td>4.01</td><td>24.61</td><td>0.842</td><td>21.48</td><td>0.849</td><td>24.14</td><td>0.928</td><td>29.44</td><td>0.894</td><td>28.66</td><td>0.866</td><td>25.87</td><td>0.876</td></tr>
+      <tr><td>LLFlow (AAAI '22)</td><td>37.7</td><td>25.13</td><td>0.872</td><td>26.20</td><td>0.888</td><td>24.80</td><td>0.919</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>25.38</td><td>0.893</td></tr>
+      <tr><td>LLFormer (AAAI '23)</td><td>24.6</td><td>25.75</td><td>0.823</td><td>26.19</td><td>0.819</td><td>28.00</td><td>0.927</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>26.64</td><td>0.856</td></tr>
+      <tr><td>DiffLight (CVPR '24)</td><td>51.7</td><td>25.85</td><td>0.876</td><td>26.19</td><td>0.819</td><td>28.00</td><td>0.927</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>26.68</td><td>0.874</td></tr>
+      <tr><td>ExpoMamba (ICML '24)</td><td>41</td><td>25.77</td><td>0.860</td><td>28.04</td><td>0.885</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>26.91</td><td>0.873</td></tr>
+      <tr><td>LL-SKF (CVPR '23)</td><td>39.91</td><td>26.79</td><td>0.879</td><td>28.45</td><td>0.905</td><td>29.11</td><td>0.953</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>28.12</td><td class="best">0.912</td></tr>
+      <tr><td>Retinexformer (ICCV '23)</td><td>1.61</td><td>27.18</td><td>0.850</td><td>27.71</td><td>0.856</td><td>29.04</td><td>0.939</td><td>29.77</td><td>0.896</td><td>29.84</td><td>0.877</td><td>28.71</td><td>0.884</td></tr>
+      <tr><td>GLARE (ECCV '24)</td><td>44.04</td><td>27.35</td><td class="best">0.883</td><td>28.98</td><td>0.905</td><td>29.84</td><td class="best">0.958</td><td>30.10</td><td>0.896</td><td>30.85</td><td>0.884</td><td>29.42</td><td>0.905</td></tr>
+      <tr class="ours"><td>ISALux (ours)</td><td>1.85</td><td>27.63</td><td>0.881</td><td>29.76</td><td>0.908</td><td>30.78</td><td>0.956</td><td>30.67</td><td>0.909</td><td>31.58</td><td>0.895</td><td>30.08</td><td>0.910</td></tr>
+    </tbody></table></div>
+  <p class="cap">Table 1 of the paper. ISALux has the highest PSNR on every dataset and the highest SSIM on LOL-v2-R, SDSD-in and SDSD-out.</p>
+
+  <div class="two">
+    <div>
+      <h3>LOL-Blur</h3>
+      <div class="tablewrap"><table class="narrow">
+        <thead><tr><th>Method</th><th>PSNR</th><th>SSIM</th></tr></thead>
+        <tbody>
+          <tr><td>FourierDiff (CVPR '24)</td><td>20.53</td><td>0.710</td></tr>
+          <tr><td>DeblurGAN-v2 (ICCV '19)</td><td>22.30</td><td>0.745</td></tr>
+          <tr><td>Retinexformer (ICCV '23)</td><td>22.90</td><td>0.824</td></tr>
+          <tr><td>LEDNet (ECCV '22)</td><td>25.74</td><td>0.850</td></tr>
+          <tr><td>ASP-LED (ICRA '24)</td><td>26.73</td><td>0.866</td></tr>
+          <tr><td>VQCNIR (AAAI '24)</td><td>27.79</td><td>0.875</td></tr>
+          <tr class="ours"><td>ISALux (ours)</td><td>28.01</td><td>0.903</td></tr>
+        </tbody></table></div>
+    </div>
+    <div>
+      <h3>Inference time</h3>
+      <div class="tablewrap"><table class="narrow">
+        <thead><tr><th>Method</th><th>Time (ms)</th></tr></thead>
+        <tbody>
+          <tr><td>GLARE (ECCV '24)</td><td>650</td></tr>
+          <tr><td>LLFlow (AAAI '22)</td><td>378</td></tr>
+          <tr><td>Retinexformer (ICCV '23)</td><td>300</td></tr>
+          <tr class="ours"><td>ISALux (ours)</td><td>105</td></tr>
+        </tbody></table></div>
+      <p class="cap">Average over LOL test images at 400&times;600.</p>
+    </div>
+  </div>
+
+  <h3>Qualitative comparison</h3>
+  <div class="fig"><img src="assets/qualitative.png" alt="Qualitative comparison on the LOL dataset"></div>
+  <p class="cap">Qualitative results on the LOL dataset. ISALux preserves colours and avoids the artifacts of competing methods.</p>
+</section>
+
+<section id="citation">
+  <div class="eyebrow">04 &middot; Citation</div>
+  <h2>BibTeX</h2>
+  <pre id="bib">@inproceedings{balmez2026isalux,
+  title     = {ISALux: Illumination and Semantics-Aware Transformer Employing Mixture of Experts for Low Light Image Enhancement},
+  author    = {Balmez, Raul and Brateanu, Alexandru and Orhei, Ciprian and Ancuti, Codruta O. and Ancuti, Cosmin},
+  booktitle = {Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)},
+  year      = {2026},
+  eprint    = {2508.17885},
+  archivePrefix = {arXiv}
+}</pre>
+  <button class="copy" id="copy" type="button">Copy BibTeX</button>
+</section>
+</main>
+
+<footer><div class="wrap">
+  ISALux is released for non-commercial research and educational use under the
+  <a href="https://github.com/raulbalmez/ISALux/blob/main/LICENSE">PolyForm Noncommercial License 1.0.0</a>.<br>
+  <a href="https://github.com/raulbalmez/ISALux">github.com/raulbalmez/ISALux</a>
+</div></footer>
+
+<script>
+document.getElementById('copy').addEventListener('click', function(){
+  var btn=this, text=document.getElementById('bib').innerText;
+  var done=function(){ btn.textContent='Copied'; setTimeout(function(){btn.textContent='Copy BibTeX'},1600); };
+  if(navigator.clipboard){ navigator.clipboard.writeText(text).then(done,function(){}); }
+});
+</script>
+</body>
+</html>

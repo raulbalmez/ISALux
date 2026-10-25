@@ -1,16 +1,16 @@
 cff-version: 1.2.0
 message: "If you use this code, please cite the paper below."
 title: "ISALux: Illumination and Semantics-Aware Transformer Employing Mixture of Experts for Low Light Image Enhancement"
-type: article
+type: conference-paper
 authors:
   - {family-names: Balmez, given-names: Raul}
   - {family-names: Brateanu, given-names: Alexandru}
   - {family-names: Orhei, given-names: Ciprian}
   - {family-names: Ancuti, given-names: Codruta}
   - {family-names: Ancuti, given-names: Cosmin}
-journal: arXiv preprint
+collection-title: "Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)"
 identifiers:
   - {type: other, value: "arXiv:2508.17885"}
-year: 2025
-url: "https://arxiv.org/abs/2508.17885"
-license: Apache-2.0
+year: 2026
+url: "https://openaccess.thecvf.com/content/WACV2026/html/Balmez_ISALux_Illumination_and_Semantics-Aware_Transformer_Employing_Mixture_of_Experts_for_WACV_2026_paper.html"
+license: PolyForm-Noncommercial-1.0.0
